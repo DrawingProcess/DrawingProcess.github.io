@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<title>The Gumbel Trick | Irene Y. Chen - UC Berkeley and UCSF</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta property="og:title" content="The Gumbel Trick">
+<meta property="og:site_name" content="Irene Y. Chen - UC Berkeley and UCSF">
+<meta property="og:url" content="https://www.benkuhn.net/gumbel/">
+<meta property="og:description"
+    content="Calculating log-partition functions for discrete probabiity distributions has never been so easy.">
+<meta name=twitter:site content="@irenetrampoline">
+<link rel=canonical href=https://www.benkuhn.net/gumbel />
+<link rel="shortcut icon" href=/favicon.ico>
+<link href="https://fonts.googleapis.com/css?family=Helvetica:300,600|Work+Sans:300,400,600&display=swap"
+    rel=stylesheet>
+<link href=../bootstrap.min.css rel=stylesheet>
+<link href=../style.css rel=stylesheet>
+<script type=text/javascript async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_HTML-full">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [["$", "$"], ["\\(", "\\)"]],
+                displayMath: [["$$", "$$"]],
+                processEscapes: !0,
+                processEnvironments: !0,
+                skipTags: ["script", "noscript", "style", "textarea", "pre"],
+                TeX: {
+                    equationNumbers: {
+                        autoNumber: "AMS"
+                    },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        }),
+        MathJax.Hub.Register.StartupHook("onLoad", function() {
+            MathJax.Hub.Config({
+                elements: document.querySelectorAll("code")
+            })
+        }),
+        MathJax.Hub.Queue(function() {
+            var e, t = MathJax.Hub.getAllJax();
+            for (e = 0; e < t.length; e += 1)
+                t[e].SourceElement().parentNode.className += " has-jax"
+        }),
+        MathJax.Hub.Config({
+            TeX: {
+                equationNumbers: {
+                    autoNumber: "AMS"
+                }
+            }
+        })
+    </script>
+
+<body class="body-posts">
+    <div class=container-fluid>
+        <br>
+        <div class="row justify-content-md-center">
+            <div class="col-xs-12 text-center page-nav">
+                <a href= />Irene Y. Chen</a>
+            </div>
+        </div>
+    </div>
+    <div class=container-fluid>
+        <div class=row>
+            <div class="col-xs-0 col-sm-0 col-md-2 links"></div>
+            <div class="col-xs-12 col-sm-8 col-md-8 slides">
+                <h1>The Gumbel Trick</h1>
+                <div class=blog-date>Aug 17, 2017</div>
+                <p>
+                    Until I read the <a href=https://arxiv.org/pdf/1706.04161.pdf>recent paper at ICML 2017</a>
+                    , I hadn &rsquo;t heard of the Gumbel trick. There is surprisingly little online about the Gumbel
+                    trick &mdash;related to the more popular <a
+                        href=https://lips.cs.princeton.edu/the-gumbel-max-trick-for-discrete-distributions />Gumbel-max
+                    trick</a>
+                    &mdash;so here we go.
+                </p>
+                <p>
+                    We often want to characterize probabilistic models in discrete situations. The Gumbel trick allows
+                    us to estimate an associated <a
+                        href=https://en.wikipedia.org/wiki/Partition_function_(mathematics)>partition function</a>
+                    <code>$ Z$</code>
+                    with relative ease. At a high level, finding <code>$ Z$</code>
+                    or even <code>$ \log Z$</code>
+                    is very difficult; however, we can add some noise and compute the <a
+                        href=https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation>maximum a posteriori</a>
+                    (MAP) more easily through approximation methods. If we repeat this process enough times, we get a
+                    reliable estimate of <code>$ Z$</code>
+                    .
+                </p>
+                <p>
+                    In complexity theory, we know that finding the MAP is <a
+                        href=https://en.wikipedia.org/wiki/NP-hardness>NP-hard</a>
+                    but can be <a href=http://cs.nyu.edu/~dsontag/papers/sontag_uai08.pdf>approximated quickly in
+                        practice</a>
+                    . Note that the partition function is a harder even still, containing <a
+                        href=https://en.wikipedia.org/wiki/Sharp-P>#P-hard</a>
+                    problems.
+                </p>
+                <p>
+                    Let &rsquo;s formalize. For finite sample <code>$ \mathcal{X}$</code>
+                    of size <code>$ N$</code>
+                    , we define an unnormalized mass function <code>$ \tilde{p} : \mathcal{X} \to [0, \infty)$</code>
+                    and let <code>$ Z:= \sum_{x \in \mathcal{X}} \tilde{p}(x)$</code>
+                    be the normalizing partition function. We then define <code>$ \phi(x) := \ln \tilde{p}(x)$</code>
+                    as the log-unnormalized probabilities or the potential function.
+                </p>
+                <p>Our algorithm is then:</p>
+                <ol>
+                    <li>Add Gumbel distributed noise to our potential functions</li>
+                    <li>
+                        Find the MAP of this perturbed value over all <code>$ x \in \mathcal{X}$</code>
+                        . Call this value <code>$ z_i$</code>
+                    </li>
+                    <li>
+                        Repeat steps 1 and 2 multiple times and then collect the mean <code>$ \hat{Z} \approx Z$</code>
+                    </li>
+                </ol>
+                <h2 id=but-why>But why?</h2>
+                <p>
+                    We want to prove the supposedly useful Gumbel trick then using the <em>Perturb-and-MAP</em>
+                    method, specifically
+                </p>
+                <p>
+                    <code>$$ \max_{x \in \mathcal{X}} \left( \phi(x) + \gamma(x) \right) \sim \text{Gumbel}(-c + \ln Z)$$</code>
+                </p>
+                <p>
+                    where <code>$\phi(x)$</code>
+                    has been defined as the potentials and <code>$ \gamma \sim \text{Gumbel}(-c)$</code>
+                    where <code>$ c$</code>
+                    is the <a href=https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant>Euler-Mascheroni
+                        constant</a>
+                    .
+                </p>
+                <p>
+                    Because the mean of <code>$ \text{Gumbel}(\mu)$</code>
+                    is <code>$ \mu + c$</code>
+                    , we can show that <code>$ \ln Z$</code>
+                    and then <code>$ Z$</code>
+                    are recoverable.
+                </p>
+                <h2 id=a-brief-gumbel-interlude>A brief Gumbel interlude</h2>
+                <p>
+                    The <a href=https://en.wikipedia.org/wiki/Gumbel_distribution>Gumbel distribution</a>
+                    is traditionally used to model the maxima of already extreme events. For example, what will be worst
+                    earthquake next year given the measurements of the worst earthquakes in the past 10 years in San
+                    Francisco?
+                </p>
+                <p>
+                    A variable <code>$ X$</code>
+                    drawn from <code>$ \text{Gumbel}(\mu)$</code>
+                    has the probability distribution
+                </p>
+                <p>
+                    <code>$$ f(x) = e^{-(z + e^{-z})}$$</code>
+                </p>
+                <p>
+                    where <code>$ z = x - \mu$</code>
+                    . For this problem, we set the scale parameter <code>$ \beta = 1$</code>
+                    whereas the location parameter <code>$ \mu$</code>
+                    remains free.
+                </p>
+                <p>
+                    Additionally, the <a href=https://en.wikipedia.org/wiki/Cumulative_distribution_function>cumulative
+                        distribution function</a>
+                    of a <code>$ \text{Gumbel}(\mu)$</code>
+                    is
+                </p>
+                <p>
+                    <code>$$ F(x) = e^{-e^{-(x-\mu)}}$$</code>
+                </p>
+                <p>This will become useful!</p>
+                <h2 id=the-actual-proof>The actual proof</h2>
+                <p>
+                    We want to find the value of <code>$ x$</code>
+                    that maximizes <code>$ \phi(x) + \gamma(x)$</code>
+                    . Thinking in terms of the CDF, we want all values of <code>$ x \in \mathcal{X}$</code>
+                    to produce smaller or equal values
+                </p>
+                <p>
+                    <code>$$\begin{align*} P\left(\max_{x \in \mathcal{X}} \left( \phi(x) + \gamma(x) \right)\right) &= \prod_{x \in \mathcal{X}} F(t - \phi(x))\\ &= \exp \left ( - \exp \left (\sum_{x \in \mathcal{X}} -(t - \phi(x) + c) \right ) \right ) \\ &= \exp \left ( - Z \exp \left (-(t +c) \right ) \right ) \\ &= \exp \left ( - \exp \left (-(t +c - \ln Z) \right ) \right ) \\ &\Rightarrow F(t) \text{ where } t \sim \text{Gumbel}(-c + \ln Z) \end{align*}$$</code>
+                </p>
+                <p>
+                    The first equality follows from multiplying the Gumbel CDF <code>$ F(t)$</code>
+                    of <code>$ \gamma(x)$</code>
+                    of all possible values to capture the maximum. The second equality comes from expanding out the
+                    Gumbel CDF. The third equality consolidates the potential functions such that
+                    <code>$ Z = \sum_{x \in \mathcal{X}} \phi(x)$</code>
+                    . The fourth equality sticks the <code>$ \ln Z$</code>
+                    back into the <code>$ \exp$</code>
+                    function. The last equality compresses the probability back into the Gumbel CDF, except set at a
+                    different location.
+                </p>
+                <h2 id=other-proofs>Other proofs</h2>
+                <p>
+                    I enjoyed and modeled this post after the proof from <a
+                        href=https://people.csail.mit.edu/tommi/papers/HazJaa-ICML12.pdf>Hazan and Jaakkola 2012</a>
+                    ; however, <a href=https://arxiv.org/pdf/1706.04161.pdf>Matej et al 2017</a>
+                    has another proof using a cleverly chosen <code>$ g$</code>
+                    function and competing exponential clocks.
+                </p>
+            </div>
+        </div>
+</body>
+
+</html>
