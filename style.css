@@ -55,7 +55,8 @@ video {
 
 .site-nav a:focus-visible,
 .post-link:focus-visible,
-.research-note a:focus-visible {
+.research-note a:focus-visible,
+.note-table:focus-visible {
   outline: 2px solid #0a58ca;
   outline-offset: 2px;
 }
@@ -258,6 +259,23 @@ footer p {
   font-size: .9rem;
 }
 
-.note-comparison dd {
-  margin-bottom: 12px;
+.note-table {
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
+.note-table table {
+  min-width: 48rem;
+  margin-bottom: 0;
+  line-height: 1.45;
+}
+
+.note-table th,
+.note-table td {
+  padding: 10px;
+  vertical-align: top;
+}
+
+.note-table thead th {
+  background-color: rgb(244, 246, 249);
 }
