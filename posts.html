@@ -23,54 +23,49 @@
           content="Exploring Physical AI, Robotics, 3D Vision, and Spatial Intelligence.">
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="/favicon.ico">
-
-    <!-- Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css?family=Helvetica:300,600|Work+Sans:300,400,600&display=swap"
-        rel="stylesheet">
+    <link rel="icon" href="data/resume/DrawingProcess.png">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
 
     <!-- Styles -->
     <link href="bootstrap.min.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
 </head>
 
-<body class="body-posts">
+<body>
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary">
+            <a class="site-brand" href="index.html#home">Seongjun Choi</a>
+            <ul class="site-nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#publications">Publications</a></li>
+                <li><a href="posts.html" aria-current="page">Posts</a></li>
+                <li><a href="archive.html">Archive</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <!-- Navigation -->
-    <div class="container-fluid">
-        <br>
-        <div class="row justify-content-md-center">
-            <div class="col-xs-12 text-center page-nav posts">
-                <a href="/">Seongjun Choi</a>
-            </div>
-        </div>
-    </div>
+    <main class="container listing-page">
+        <h1 class="section-name">Posts</h1>
 
-    <!-- Posts -->
-    <div class="container-fluid">
-        <div class="row posts">
-
-            <div class="col-xs-0 col-sm-0 col-md-2 links"></div>
-
-            <div class="col-xs-12 col-sm-8 col-md-8 slides">
-
-                <h1>Posts</h1>
-
-                <!-- NVIDIA Physical AI Atlas -->
-                <div class="item">
-                    <div class="date">November 12, 2026</div>
-
-                    <div class="posttitle">
-                        <a href="posts/NVIDIA_Physical_AI_Atlas_v2.2_Package/NVIDIA_Physical_AI_Ecosystem_Atlas_v2.2_EN_KO.html">
-                            NVIDIA Physical AI Ecosystem Atlas
-                        </a>
+        <ul class="list-unstyled pub-list" role="list">
+            <li>
+                <a class="row pub-item post-link"
+                   href="posts/NVIDIA_Physical_AI_Atlas_v2.2_Package/NVIDIA_Physical_AI_Ecosystem_Atlas_v2.2_EN_KO.html"
+                   aria-labelledby="nvidia-atlas-title" aria-describedby="nvidia-atlas-date nvidia-atlas-summary">
+                    <div class="col-md-4 paper-thumbnail">
+                        <img class="post-thumbnail"
+                             src="posts/NVIDIA_Physical_AI_Atlas_v2.2_Package/nvidia_atlas_n2_overview_en.png"
+                             width="1440" height="3536" alt="">
                     </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
+                    <div class="col-md-8 paper-info">
+                        <h2 class="post-title" id="nvidia-atlas-title">NVIDIA Physical AI Ecosystem Atlas</h2>
+                        <p class="text-muted"><time id="nvidia-atlas-date" datetime="2026-11-12">November 12, 2026</time></p>
+                        <p class="post-summary" id="nvidia-atlas-summary">A bilingual technical reference mapping 34 NVIDIA Physical AI technologies across six layers, with three research workflows for simulation-ready scenes, semantic mapping, and humanoid robot policies.</p>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </main>
 
     <!-- Footer -->
     <footer class="text-center">
