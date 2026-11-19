@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A comparison of the tasks, robot learning methods, and evaluation evidence behind GR00T 2, HolidayFactory 1.0, DexBench, and Gemini Robotics 2.5.">
+    <title>Robot Learning, November 2026 | DrawingProcess</title>
+    <link rel="icon" href="../../data/resume/DrawingProcess.png">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <link href="../../bootstrap.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary">
+            <a class="site-brand" href="../../index.html#home">Seongjun Choi</a>
+            <ul class="site-nav-links">
+                <li><a href="../../index.html#home">Home</a></li>
+                <li><a href="../../index.html#publications">Publications</a></li>
+                <li><a href="../../posts.html" aria-current="true">Posts</a></li>
+                <li><a href="../../archive.html">Archive</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container research-note">
+        <article>
+            <header>
+                <p class="text-muted mb-1"><time datetime="2026-11-13">November 13, 2026</time></p>
+                <h1>Robot Learning, November 2026</h1>
+                <p class="lead">What can robots learn from human demonstrations, how do we test whether the skill transfers, and what happens when failures carry over to the next job? Four November releases provide evidence at different stages of that process.</p>
+            </header>
+
+            <nav class="note-contents" aria-label="Article contents">
+                <ul role="list">
+                    <li><a href="#comparison">Comparison</a></li>
+                    <li><a href="#gr00t">NVIDIA GR00T 2</a></li>
+                    <li><a href="#holidayfactory">HolidayFactory 1.0</a></li>
+                    <li><a href="#dexbench">RLWRLD DexBench</a></li>
+                    <li><a href="#gemini">Gemini Robotics 2.5</a></li>
+                    <li><a href="#experiment">Example experiment</a></li>
+                </ul>
+            </nav>
+
+            <section id="comparison" aria-labelledby="comparison-title">
+                <h2 id="comparison-title">How the four projects compare</h2>
+                <div class="note-table" role="region" aria-labelledby="comparison-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption id="comparison-caption" class="caption-top">Representative tasks, contributions to robot learning, and limits of the evidence.</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Project</th>
+                                <th scope="col">Tasks covered</th>
+                                <th scope="col">Role in robot learning</th>
+                                <th scope="col">Why it matters</th>
+                                <th scope="col">What the evidence establishes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row"><a href="#gr00t">GR00T 2</a></th>
+                                <td>Filter-paper setup, bimanual toy assembly, memory-module insertion, and humanoid loco-manipulation.</td>
+                                <td>Policy pretraining on human video and robot demonstrations, transfer across robot bodies, and few-shot adaptation.</td>
+                                <td>Human and handheld demonstrations can teach parts of a skill before the target robot collects task-specific data.</td>
+                                <td>On Dexter-50, trial success rose from 40% zero-shot to 95% with five demonstrations per task. This is a transfer result on a specific robot and task suite.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><a href="#holidayfactory">HolidayFactory 1.0</a></th>
+                                <td>Conveyor, flow-rack, and jig loading, cart pushing, press tending, valve operation, and barcode routing.</td>
+                                <td>Contact and actuator simulation, verified scene generation, and evaluation across repeated jobs without resets.</td>
+                                <td>A dropped or misplaced part can change the next job. Persistent runs expose effects on throughput and recovery that episode success can hide.</td>
+                                <td>Seven simulated tasks and checks of the evaluation rules. The report leaves learned-policy rankings on persistent runs open.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><a href="#dexbench">DexBench</a></th>
+                                <td>Fifteen simulated tasks, including connector insertion, screw fastening, moving-conveyor kitting, plate stacking, and pouring.</td>
+                                <td>Dexterity taxonomy, fixed-start policy evaluation, and controlled changes to objects, spatial layouts, or physics.</td>
+                                <td>Shared initial states and explicit tolerances help pinpoint which change breaks a policy and make experiments comparable.</td>
+                                <td>Success rates measure specified conditions in simulation. Different tasks support different generalization tests.</td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><a href="#gemini">Gemini Robotics 2.5</a></th>
+                                <td>Tool use, deformable-object handling, precise placement, and automotive parts kitting.</td>
+                                <td>Vision-language-action control, workflow tracking through a separate reasoning model, and real-world deployment evaluation.</td>
+                                <td>The factory pilot tests whether reasoning and low-level manipulation can work together in an active production workflow.</td>
+                                <td>DeepMind reports 96% success for the integrated kitting system in its pilot. The announcement gives no trial count or shift-level throughput.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>GR00T 2 and Gemini Robotics 2.5 produce robot actions. HolidayFactory and DexBench provide environments and protocols for evaluating policies. GR00T 2's 95% and Gemini Robotics 2.5's 96% describe different robots, tasks, interventions, and success criteria, so they cannot rank the two policies.</p>
+            </section>
+
+            <section id="gr00t" aria-labelledby="gr00t-title">
+                <h2 id="gr00t-title">NVIDIA GR00T 2</h2>
+                <p class="text-muted">World-action model · November 2026</p>
+                <h3>Learning from future video and actions</h3>
+                <p>GR00T 2 takes recent camera observations, a language instruction, and robot state, and predicts future video alongside a chunk of robot actions. A single diffusion transformer built on Cosmos-Predict2.5-2B processes video, state, and action tokens. A frozen Wan 2.1 VAE compresses each camera stream. The transformer reads instructions encoded by Cosmos-Reason1 through cross-attention, and small robot-specific networks translate between the shared representation and each robot's state and action spaces.</p>
+                <p>The model learns video and action prediction with separate flow-matching losses. The action loss applies where valid action labels are available, so unlabelled human video can still teach visual dynamics. At inference, action tokens attend to the video tokens being generated. The robot executes a chunk while the system computes the next one, then repeats with fresh observations. The predicted video can inform the action, while physical contact and collision risk still need separate validation.</p>
+                <h3>What transfers to the target robot?</h3>
+                <p>NVIDIA reports 402,730 hours of egocentric human video, 10,184 hours of handheld UMI demonstrations, and 23,500 hours of robot teleoperation in the pretraining mixture. Human footage supplies breadth, UMI and DexUMI give more direct access to hand or gripper motion, and teleoperation grounds the policy in the target hardware's action space. In some transfer experiments, task-agnostic data taught the target robot how its own body moves while another source supplied the task demonstration.</p>
+                <ul>
+                    <li><strong>Data scaling.</strong> On 72 Dexter tasks, real-robot task progress rose from about 50% to 70% as the amount of human video increased. Task progress credits intermediate steps, whereas completion success requires finishing the task.</li>
+                    <li><strong>Few-shot adaptation.</strong> Across 50 tasks absent from Dexter's own training data, trial success was 40% zero-shot, 71% with one demonstration, and 95% with five. Zero-shot, Dexter completed 40 of the 50 tasks at least once. The five-demonstration setup used under three minutes of target-robot data per task and rank-32 LoRA, with about 30 minutes of fine-tuning on one RTX 5090.</li>
+                    <li><strong>Transfer and recovery.</strong> Dexter succeeded on 65% of filter-paper trials after human-only task demonstrations. YAM succeeded on 60% of toy-truck trials after handheld UMI demonstrations. In a separate system with a reasoning agent managing steps and recovery, YAM completed at least 97 of 100 assemblies for each of three toys.</li>
+                    <li><strong>Onboard control.</strong> GR00T 2 Turbo predicted a chunk in 124 ms on a Unitree G1's Jetson Thor. This measures inference latency. On a separate post-training dexterity suite in the white paper, average success fell from 68.6% for GR00T 2 to 34.3% for Turbo, illustrating the cost of the smaller model on these tasks.</li>
+                </ul>
+                <p>To isolate what produces each improvement, compare policies with the same observation and action formats, then vary pretraining, fine-tuning data, and agent-assisted recovery independently. As of November 13, NVIDIA listed code availability for December. <a href="https://research.nvidia.com/labs/gear/gr00t-2/">Project and demos</a> · <a href="https://research.nvidia.com/labs/gear/gr00t-2/assets/gr00t2_whitepaper.pdf">White paper, §§2–4 and Appendix A</a></p>
+            </section>
+
+            <section id="holidayfactory" aria-labelledby="holiday-title">
+                <h2 id="holiday-title">HolidayFactory 1.0</h2>
+                <p class="text-muted">Industrial simulation and evaluation framework · November 9, 2026 preprint</p>
+                <h3>What changes when the scene persists?</h3>
+                <p>A misplaced part on a conveyor can change what the robot sees or can reach on the next job. HolidayFactory combines a <em>scenario</em>, which specifies scene variants and process logic, with an <em>evaluation</em>, which defines job events and criteria, to form a <em>world</em>. The robot or controller acts on the current state and the scene carries forward between jobs.</p>
+                <ul>
+                    <li><strong>Holiday-Sim</strong> extends Newton's signed-distance-field hydroelastic contact with material laws and a semi-implicit primal-dual solver. The FRIDAY hand motivates modeling hydraulic closing, passive spring return, and tactile signals derived from contact patches. The simulator also models actuator state, including electrical and thermal effects.</li>
+                    <li><strong>Agentic world construction</strong> turns work requirements into assets and scene constraints. Mesh or code-generated assets are checked for geometry, collisions, articulation, and interactions. People confirm proposed evaluation rules before they are compiled and tested. A start region that extends too high, for example, can falsely count a new job when a carried object passes through it again.</li>
+                    <li><strong>24/7-Bench</strong> covers seven jobs and tracks completed, failed, and unfinished jobs, throughput, latency, and motor energy. That makes it possible to study how local failures affect a sequence of jobs.</li>
+                </ul>
+                <h3>What the experiments verify</h3>
+                <p>After correcting false start events, 185 region checks, 20 start-state probes, and 32 scripted trajectories matched expected outcomes across six tasks. These checks validate the tested scoring cases. The paper does not yet rank learned policies on persistent runs or establish that simulated rankings carry over to factory hardware. A follow-up comparison should repeat complete runs under matched initial conditions, since consecutive jobs within a run can influence one another. <a href="https://arxiv.org/html/2611.11789v1">Preprint, §§3–6 and Appendix F</a> · <a href="https://arxiv.org/html/2611.11789v1/overview_paper.png">Project overview figure</a> · <a href="https://holiday-robotics.com/blog/simulating-things-that-decide/">Simulator engineering notes</a></p>
+            </section>
+
+            <section id="dexbench" aria-labelledby="dexbench-title">
+                <h2 id="dexbench-title">RLWRLD DexBench</h2>
+                <p class="text-muted">Industrial dexterity taxonomy and simulation benchmark · November 9, 2026</p>
+                <figure>
+                    <img class="img-fluid w-100" src="dexbench-manufacturing.jpg" width="720" height="720" alt="DexBench simulated manufacturing environment" loading="lazy">
+                    <figcaption>DexBench manufacturing environment. <a href="https://github.com/RLWRLD/DexBench#environments">RLWRLD's official repository</a></figcaption>
+                </figure>
+                <h3>What makes a manipulation skill difficult?</h3>
+                <p>The taxonomy describes 16 Actions and 78 Skills. An Action has a single purpose, such as insertion. A Skill identifies a specific bottleneck, such as tight clearance. A World composes skills into an industrial task. Object State Complexity describes the source of difficulty through geometry, force, contact mode, partial observation, deformation, and timing or dynamics. Dexterity Regimes describe the required ability through grasp diversity, spatial precision, timing, contact precision, and context awareness. <a href="https://dexbench.org/en/">Taxonomy</a> · <a href="https://dexbench.org/en/osc-axes/">Complexity axes</a> · <a href="https://dexbench.org/en/dexterity-regimes/">Dexterity regimes</a></p>
+                <h3>Testing generalization on shared initial states</h3>
+                <p>The released suite covers 15 tasks across retail, logistics, manufacturing, and hospitality in IsaacLab-Arena with Newton physics. Each policy replays the same frozen initial states. GA-O tests held-out objects, GA-S tests spatial conditions beyond training, and GA-P tests shifts in physical properties. Some tasks use combinations of these conditions. The v1 protocol scores 60 episodes per cell, and v1-plus scores 120.</p>
+                <p>In connector insertion (m2), the GA-S cell shifts the starting positions of the connector and robot base. Success requires holding the connector within 1 mm along its axis, 0.5 mm laterally, and 2° of tilt for two seconds. The rule does not require release. In liquid pouring (h2), at least 90 mL must reach the glass with less than 5 mL spilled, sustained for five seconds. The scorer reports a success rate and a 95% Bayesian interval per cell, and averages cell success rates within a task. <a href="https://github.com/RLWRLD/DexBench/blob/main/docs/Eval_Protocol.md">Evaluation protocol, §§1–2 and 9–10</a></p>
+                <p>The release includes evaluation, OpenXR teleoperation, and separate LeRobot v3.0 demonstration data. The public repository does not include training or data generation scripts. For comparable results, record the checkpoint, protocol version, policy rate, time cap, observation settings, and evaluation cells. Frozen resets make controlled comparisons possible. To study failure carryover, use a separate persistent run. <a href="https://github.com/RLWRLD/DexBench">Code and setup</a> · <a href="https://huggingface.co/datasets/RLWRLD/DexBench-datasets">Demonstrations</a> · <a href="https://dexbench.ai/">Tasks and leaderboard</a></p>
+            </section>
+
+            <section id="gemini" aria-labelledby="gemini-title">
+                <h2 id="gemini-title">Gemini Robotics 2.5</h2>
+                <p class="text-muted">Vision-language-action model · November 10, 2026</p>
+                <h3>Combining task reasoning with physical control</h3>
+                <p>In DeepMind's automotive kitting pilot, Gemini Robotics ER tracked workflow progress while the Gemini Robotics 2.5 VLA controlled Apollo 2's hands and arms. The system picked metal brackets from bulk bins and placed them into trays in production order. Apollo 2 used 22-degree-of-freedom SharpaWave hands. DeepMind also describes support for the Franka Duo platform with parallel grippers.</p>
+                <p>DeepMind reports using Gemini 4 Argon to construct digital twins from real camera scenes and generate simulated practice runs, which were combined with real demonstrations. Argon also helped researchers propose causes for failures seen on video and test them in simulation and on hardware. The 2.5 announcement gives no parameter count, training objective, or data mixture sufficient to reconstruct the policy. <a href="https://developers.googleblog.com/en/gemini-4-argon-for-robotics/">Argon's robotics research workflow</a></p>
+                <h3>Reading the three kinds of evidence</h3>
+                <ul>
+                    <li><strong>Task breadth.</strong> DeepMind evaluated roughly 200 tasks, including handling tongs, manipulating ribbons, and using pipettes. It reports success rates 30–100% higher than prior baselines, depending on task type, and 20–30% faster completion. One reported result is a rise from 0% to 52% for sweeping debris into a dustpan.</li>
+                    <li><strong>Factory reliability.</strong> The Mercedes-Benz proof of concept in Hungary and Germany reported 96% success for automotive parts kitting using ER and VLA together. The public announcement leaves trial counts, operating time, and intervention frequency unspecified.</li>
+                    <li><strong>Safety.</strong> Inference-time guidance improved safe task completion by 33% around obstacles and 43% around nearby people in the reported evaluations. The 99.5% jailbreak resistance figure measures Gemini 4 Argon's response to disguised unsafe requests on ASIMOV-Jailbreak. It does not measure VLA collision avoidance.</li>
+                </ul>
+                <p>To assess a transfer to another production line, pair success rate with throughput, part-placement quality, interventions, and safety stops. As of November 13, DeepMind reported rollout to robotics partners and had not listed a public 2.5 checkpoint in the announcement. <a href="https://deepmind.google/blog/gemini-robotics-2-5-accelerates-real-world-physical-intelligence/">Official announcement, evaluation charts, and pilot footage</a></p>
+            </section>
+
+            <section id="experiment" aria-labelledby="experiment-title">
+                <h2 id="experiment-title">Example experiment: connector insertion</h2>
+                <p>Test the same robot and cameras with zero, one, and five target-robot demonstrations. Use DexBench-style fixed start states and held-out pose ranges to see whether adaptation improves insertion precision. Then run a HolidayFactory-style sequence without resetting after a misplaced connector and record throughput and recovery time. Finally, compare simulated contact and recovery with insertion force, damaged parts, and operator interventions on a real fixture. Together, these measurements reveal whether a failure comes from poor transfer, insufficient contact precision, or an inability to recover as errors accumulate.</p>
+            </section>
+            <footer><a href="../../posts.html">← Back to Posts</a></footer>
+        </article>
+    </main>
+</body>
+</html>

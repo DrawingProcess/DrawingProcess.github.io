@@ -46,7 +46,7 @@ video {
 }
 
 .site-nav a:hover,
-.site-nav a[aria-current="page"],
+.site-nav a[aria-current],
 .post-link:hover .post-title,
 .post-link:focus-visible .post-title {
   text-decoration: underline;
@@ -54,7 +54,9 @@ video {
 }
 
 .site-nav a:focus-visible,
-.post-link:focus-visible {
+.post-link:focus-visible,
+.research-note a:focus-visible,
+.note-table:focus-visible {
   outline: 2px solid #0a58ca;
   outline-offset: 2px;
 }
@@ -199,4 +201,81 @@ footer p {
 
 .paper-info .post-summary {
   margin-top: 8px;
+}
+
+.container.research-note {
+  max-width: 52rem;
+  margin-block: 32px 48px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.research-note h2 {
+  border-top: 1px solid #d9dde2;
+  padding-top: 16px;
+  font-size: 1.6rem;
+}
+
+.research-note h3 {
+  margin-top: 24px;
+  font-size: 1.2rem;
+}
+
+.research-note section {
+  margin-top: 32px;
+  scroll-margin-top: 64px;
+}
+
+.research-note li {
+  list-style: disc;
+  margin-bottom: 8px;
+}
+
+.note-contents {
+  padding: 12px 16px;
+  background-color: rgb(244, 246, 249);
+}
+
+.note-contents ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.note-contents li {
+  list-style: none;
+  margin: 0;
+}
+
+.research-note figure {
+  max-width: 28rem;
+}
+
+.research-note figcaption {
+  margin-top: 6px;
+  color: rgb(105, 105, 105);
+  font-size: .9rem;
+}
+
+.note-table {
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
+.note-table table {
+  min-width: 48rem;
+  margin-bottom: 0;
+  line-height: 1.45;
+}
+
+.note-table th,
+.note-table td {
+  padding: 10px;
+  vertical-align: top;
+}
+
+.note-table thead th {
+  background-color: rgb(244, 246, 249);
 }
