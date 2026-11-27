@@ -12,5 +12,5 @@ Add a full-card link to posts.html. Order all cards by their time datetime value
 Reuse root style.css and Bootstrap. Check mobile table scrolling, focus, paths, and anchors.
 Commit locally. Push or create a PR only when requested.
 
-Reference: ../../posts/robot-learning-2026-11/index.html
+Reference: ../../posts/261113_robot-learning/index.html
 Worked example: ../../posts/agentic-robotics-corl-2026/index.html
