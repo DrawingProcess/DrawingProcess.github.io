@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A purpose-first guide to robotics datasets, demonstrations, scene assets, and benchmarks, with official resources and examples.">
+    <title>Robotics Datasets: What Each Resource Is For | DrawingProcess</title>
+    <link rel="icon" href="../../data/resume/DrawingProcess.png">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <link href="../../bootstrap.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary">
+            <a class="site-brand" href="../../index.html#home">Seongjun Choi</a>
+            <ul class="site-nav-links">
+                <li><a href="../../index.html#home">Home</a></li>
+                <li><a href="../../index.html#publications">Publications</a></li>
+                <li><a href="../../posts.html" aria-current="true">Posts</a></li>
+                <li><a href="../../archive.html">Archive</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container research-note">
+        <article>
+            <header>
+                <p class="text-muted mb-1"><time datetime="2026-11-27">November 27, 2026</time></p>
+                <h1>Robotics Datasets: What Each Resource Is For</h1>
+                <p class="lead">Choose robotics data by the capability you want to learn or measure. A camera trajectory, a robot demonstration, a navigable room, and an interactive task each provide a different kind of supervision.</p>
+                <p>This guide expands a survey of robot benchmarks into a practical resource map. Official project pages and documentation were checked on November 27, 2026. Collection sizes refer to the releases described below, and available sensors or labels can vary within a collection.</p>
+            </header>
+            <nav class="note-contents" aria-label="Article contents">
+                <ul role="list">
+                    <li><a href="#start">Choose by purpose</a></li>
+                    <li><a href="#perception">Perception and SLAM</a></li>
+                    <li><a href="#demonstrations">Real robot demonstrations</a></li>
+                    <li><a href="#simulation">Simulated manipulation</a></li>
+                    <li><a href="#embodied">Navigation and interaction</a></li>
+                    <li><a href="#tools">Safety and tooling</a></li>
+                    <li><a href="#selection">Design an experiment</a></li>
+                </ul>
+            </nav>
+
+            <section id="start" aria-labelledby="start-title">
+                <h2 id="start-title">Choose by the question you want to answer</h2>
+                <div class="note-table" role="region" aria-labelledby="start-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption class="caption-top" id="start-caption">Starting points for common research objectives.</caption>
+                        <thead><tr><th scope="col">Research question</th><th scope="col">Useful starting points</th><th scope="col">Supervision or asset</th><th scope="col">Evaluation to add</th></tr></thead>
+                        <tbody>
+                            <tr><th scope="row">Where is the robot, and what is around it?</th><td><a href="#perception">KITTI, TUM RGB-D, EuRoC, nuScenes</a></td><td>Sensor sequences, trajectories, object annotations.</td><td>Trajectory, depth, detection, or tracking error on held-out sequences.</td></tr>
+                            <tr><th scope="row">How can a robot learn an action from demonstrations?</th><td><a href="#demonstrations">Open X-Embodiment, DROID, BridgeData V2, robomimic</a></td><td>Observations aligned with actions and task labels.</td><td>Closed-loop success on new objects, scenes, or robots.</td></tr>
+                            <tr><th scope="row">What knowledge transfers across manipulation tasks?</th><td><a href="#simulation">LIBERO, ManiSkill, VLABench</a></td><td>Demonstrations, task definitions, and resettable environments.</td><td>Generalization, retention after learning, and task completion.</td></tr>
+                            <tr><th scope="row">Can a robot complete a household activity?</th><td><a href="#behavior">BEHAVIOR-1K and its challenge demonstrations</a></td><td>Interactive scenes, symbolic goals, long task sequences.</td><td>Goal completion, partial progress, elapsed time, and recovery.</td></tr>
+                            <tr><th scope="row">Can it navigate, fetch objects, or work around people?</th><td><a href="#embodied">HM3D, ReplicaCAD, HomeRobot, Habitat 3.0, SocNavBench, SEANavBench</a></td><td>Scene geometry, task episodes, interactions, pedestrian motion.</td><td>Navigation efficiency, retrieval success, collisions, and human comfort.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>A <strong>dataset</strong> supplies recorded examples or assets. A <strong>simulator</strong> generates observations as an agent acts. A <strong>benchmark</strong> adds tasks, splits, metrics, and comparison rules. A <strong>challenge</strong> runs an evaluation under submission rules. The tables identify the resource type so the name also tells you what you will obtain.</p>
+            </section>
+
+            <section id="perception" aria-labelledby="perception-title">
+                <h2 id="perception-title">Perception and SLAM: estimate the world and the robot's motion</h2>
+                <div class="note-table" role="region" aria-labelledby="perception-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption class="caption-top" id="perception-caption">Recorded real sensor datasets with reference measurements or annotations.</caption>
+                        <thead><tr><th scope="col">Dataset and purpose</th><th scope="col">Platform and data</th><th scope="col">Typical task</th><th scope="col">How to use the result</th></tr></thead>
+                        <tbody>
+                            <tr id="kitti"><th scope="row">KITTI<br>Outdoor geometry and driving-scene perception</th><td>Vehicle-mounted cameras, LiDAR, and localization data.</td><td>Stereo, optical flow, odometry, 3D detection, tracking.</td><td>Choose the task-specific split and metric. Different KITTI tracks have different labels. <a href="https://www.cvlibs.net/datasets/kitti/">Project and benchmark tracks</a></td></tr>
+                            <tr id="tum"><th scope="row">TUM RGB-D<br>Indoor visual odometry and SLAM</th><td>Kinect color and depth sequences with motion-capture camera trajectories.</td><td>Estimate camera motion and reconstruct indoor geometry.</td><td>Compare trajectories with ground truth, reporting alignment and timestamp association. <a href="https://cvg.cit.tum.de/data/datasets/rgbd-dataset">Dataset and evaluation tools</a></td></tr>
+                            <tr id="euroc"><th scope="row">EuRoC MAV<br>Visual-inertial state estimation</th><td>Aerial-platform stereo images at 20 Hz, IMU at 200 Hz, calibration, and reference motion.</td><td>Fuse vision and inertial measurements under motion and illumination changes.</td><td>Inspect camera–IMU timing and ground-truth coverage per sequence. <a href="https://projects.asl.ethz.ch/datasets/euroc-mav/">Dataset and downloads</a></td></tr>
+                            <tr id="nuscenes"><th scope="row">nuScenes<br>Multisensor 3D scene understanding</th><td>Driving scenes with camera, LiDAR, radar, and annotated objects.</td><td>3D object detection and tracking.</td><td>Select the release and official devkit metric for the task. <a href="https://www.nuscenes.org/nuscenes">Dataset portal</a> · <a href="https://github.com/nutonomy/nuscenes-devkit">Evaluation devkit</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <figure>
+                    <img class="img-fluid" src="asset/kitti-sensors.jpg" width="298" height="257" alt="KITTI collection vehicle with labeled camera, laser, and localization sensors" loading="lazy">
+                    <figcaption>The sensor rig makes KITTI's purpose visible: synchronized measurements of a moving outdoor scene. Image from the <a href="https://www.cvlibs.net/datasets/kitti/">KITTI project</a>, whose data and benchmarks use <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/">CC BY-NC-SA 3.0</a>.</figcaption>
+                </figure>
+                <p>These resources support measurement-driven perception research. Their outputs describe motion or scene structure. To test how those estimates affect manipulation or navigation, connect the estimator to a controller and run an additional closed-loop experiment.</p>
+            </section>
+
+            <section id="demonstrations" aria-labelledby="demonstrations-title">
+                <h2 id="demonstrations-title">Real robot demonstrations: learn what action to take</h2>
+                <div class="note-table" role="region" aria-labelledby="demonstrations-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption class="caption-top" id="demonstrations-caption">Action-supervised resources for imitation learning and policy pretraining.</caption>
+                        <thead><tr><th scope="col">Resource and purpose</th><th scope="col">What it contains</th><th scope="col">Learning question</th><th scope="col">What to check</th></tr></thead>
+                        <tbody>
+                            <tr id="oxe"><th scope="row">Open X-Embodiment<br>Learn across robot bodies</th><td>The original collection pools over one million real trajectories across 22 robot embodiments, using RLDS episodes.</td><td>Does experience on one robot improve another robot's policy?</td><td>Constituent datasets have different action spaces, sensors, and collection histories. <a href="https://robotics-transformer-x.github.io/">Project and paper</a> · <a href="https://github.com/google-deepmind/open_x_embodiment">Data access and metadata</a></td></tr>
+                            <tr id="droid"><th scope="row">DROID<br>Generalize across real scenes</th><td>76,000 trajectories, about 350 hours, 564 scenes, and 86 tasks, collected with a portable Franka Panda setup.</td><td>How much does environment diversity improve manipulation?</td><td>Choose RLDS or raw data and record the calibration and language-annotation version. <a href="https://droid-dataset.github.io/">Project and visualizer</a> · <a href="https://droid-dataset.github.io/droid/the-droid-dataset">Download guide</a></td></tr>
+                            <tr id="bridge"><th scope="row">BridgeData V2<br>Language- and goal-conditioned manipulation</th><td>60,096 trajectories across 24 environments using a WidowX arm; teleoperated and scripted subsets.</td><td>Can a skill follow a new instruction or transfer to a new object or workspace?</td><td>Camera availability varies across episodes. Keep scripted and teleoperated sources identifiable. <a href="https://rail-berkeley.github.io/bridgedata/">Data, code, and task examples</a></td></tr>
+                            <tr id="robomimic"><th scope="row">robomimic datasets<br>Study learning from demonstrations</th><td>A framework and associated simulated and real manipulation collections, with observations, actions, and episode metadata.</td><td>How do demonstrations and learning algorithms affect closed-loop performance?</td><td>Name the dataset release, task, and subset rather than only the framework. <a href="https://robomimic.github.io/docs/datasets/overview.html">Dataset catalog and format</a> · <a href="https://robomimic.github.io/study/">Original study</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <figure style="max-width: 100%;">
+                    <img class="img-fluid" src="asset/oxe-overview.png" width="2040" height="642" alt="Open X-Embodiment overview showing constituent datasets, robot bodies, and manipulation examples" loading="lazy">
+                    <figcaption>OXE brings different robots and collections into a common episode representation. Figure from the <a href="https://robotics-transformer-x.github.io/">Open X-Embodiment Collaboration</a>.</figcaption>
+                </figure>
+                <h3>Diversity across scenes and diversity across bodies</h3>
+                <p>OXE makes data from multiple embodiments available for joint learning. DROID holds the robot platform consistent while moving collection into varied real environments. These designs let researchers ask different transfer questions. A useful experiment records both the source mixture and which objects, scenes, or embodiments are held out.</p>
+                <figure>
+                    <img class="img-fluid" src="asset/droid-setup.png" width="811" height="616" alt="Portable DROID collection setup with Franka arm, external cameras, wrist camera, and teleoperation equipment" loading="lazy">
+                    <figcaption>DROID's repeatable hardware supports collection across many locations. Figure from the <a href="https://droid-dataset.github.io/">DROID Dataset Team</a>.</figcaption>
+                </figure>
+                <h3>What an instruction-conditioned example looks like</h3>
+                <p>BridgeData V2 associates trajectories with language and includes actions such as picking, pushing, opening, and cloth handling. Goal-image conditioning provides another way to specify a desired outcome. When building a loader, inspect actual observations per episode before assuming every camera exists. <a href="https://rail-berkeley.github.io/bridgedata/">BridgeData V2 collection and sensor details</a></p>
+                <figure>
+                    <img class="img-fluid" src="asset/bridge-example.jpg" width="320" height="240" alt="BridgeData robot arm interacting with a miniature laundry-machine workspace" loading="lazy">
+                    <figcaption>A BridgeData workspace example illustrates goal-directed manipulation. Image from <a href="https://rail-berkeley.github.io/bridgedata/">Berkeley RAIL's BridgeData V2 page</a>.</figcaption>
+                </figure>
+            </section>
+
+            <section id="simulation" aria-labelledby="simulation-title">
+                <h2 id="simulation-title">Simulated manipulation: control the task and the distribution shift</h2>
+                <div class="note-table" role="region" aria-labelledby="simulation-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption class="caption-top" id="simulation-caption">Simulation suites with demonstrations or data-generation support.</caption>
+                        <thead><tr><th scope="col">Resource and purpose</th><th scope="col">Data and task design</th><th scope="col">What it tests</th><th scope="col">Access and interpretation</th></tr></thead>
+                        <tbody>
+                            <tr id="libero"><th scope="row">LIBERO<br>Knowledge transfer and retention</th><td>130 tasks across Spatial, Object, Goal, and LIBERO-100 suites, with human teleoperation demonstrations.</td><td>Transfer of spatial, object, and goal knowledge; retention as tasks are learned sequentially.</td><td>Report the exact suite and task order. A multitask score alone cannot establish lifelong retention. <a href="https://github.com/Lifelong-Robot-Learning/LIBERO">Code and dataset instructions</a></td></tr>
+                            <tr id="maniskill"><th scope="row">ManiSkill demonstrations<br>Learn generalizable manipulation at simulation scale</th><td>Task-specific demonstrations and replay tools, with actions, environment states, and metadata.</td><td>Imitation or reinforcement learning across object variations and control setups.</td><td>Some downloads store compact states and require replay to generate images. Match the controller and physics backend. <a href="https://maniskill.readthedocs.io/en/latest/user_guide/datasets/demos.html">Download and format</a> · <a href="https://github.com/mani-skill/ManiSkill">Framework</a></td></tr>
+                            <tr id="behavior"><th scope="row">BEHAVIOR-1K / 2026 challenge data<br>Long-horizon household work</th><td>The full suite defines 1,000 activities. The 2026 demonstration release covers 100 tasks with 20,000 teleoperated trajectories.</td><td>Mobile manipulation, multi-step goals, and state-changing object interactions.</td><td>Name the task subset and the demonstration release. <a href="https://behavior.stanford.edu/">Full benchmark</a> · <a href="https://behavior.stanford.edu/challenge/dataset.html">Challenge data</a></td></tr>
+                            <tr id="vlabench"><th scope="row">VLABench<br>Language understanding and long-horizon reasoning</th><td>100 task categories, varied objects, and automated training demonstrations.</td><td>Implicit intentions, common sense, spatial relations, and multi-step manipulation.</td><td>Identify whether the evaluated component is a language planner or an action policy. <a href="https://vlabench.github.io/">Project, data, and code</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <figure style="max-width: 100%;">
+                    <img class="img-fluid" src="asset/libero-overview.png" width="4400" height="2400" alt="LIBERO task suites separating changes in objects, spatial layouts, and goals" loading="lazy">
+                    <figcaption>LIBERO controls what changes across tasks so transfer can be studied explicitly. Figure from <a href="https://github.com/Lifelong-Robot-Learning/LIBERO">Liu and colleagues' official repository</a>.</figcaption>
+                </figure>
+                <h3>Long tasks require goals that capture the intended outcome</h3>
+                <p>BEHAVIOR uses interactive scenes and object-state goals in OmniGibson. Its 2026 challenge demonstration files include RGB, depth, actions, proprioception, and language annotations. This supports learning extended activities and replaying their observations. The 100-task demonstration set covers a subset of the broader 1,000-activity benchmark. <a href="https://behavior.stanford.edu/challenge/dataset.html">BEHAVIOR challenge dataset specification</a></p>
+                <figure>
+                    <img class="img-fluid" src="asset/behavior-rgb.png" width="389" height="389" alt="Example RGB observation from the BEHAVIOR challenge dataset" loading="lazy">
+                    <figcaption>Official RGB example linked by the challenge's dataset documentation. Image from the <a href="https://behavior.stanford.edu/challenge/dataset.html">Stanford BEHAVIOR team</a>.</figcaption>
+                </figure>
+                <p>In these suites, demonstrations provide training examples and the simulator supplies new closed-loop trials. Evaluate novel initial states, objects, and instructions separately, and preserve the version of the environment and success predicates.</p>
+            </section>
+
+            <section id="embodied" aria-labelledby="embodied-title">
+                <h2 id="embodied-title">Navigation, mobile manipulation, and human interaction</h2>
+                <div class="note-table" role="region" aria-labelledby="embodied-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption class="caption-top" id="embodied-caption">Scene assets and task protocols for robots that move through shared spaces.</caption>
+                        <thead><tr><th scope="col">Resource and purpose</th><th scope="col">What you obtain</th><th scope="col">Typical use</th><th scope="col">Important boundary</th></tr></thead>
+                        <tbody>
+                            <tr id="hm3d"><th scope="row">HM3D<br>Visual navigation in realistic buildings</th><td>A collection described as 1,000 reconstructed indoor spaces from real scans.</td><td>Train or evaluate navigation across building layouts in Habitat.</td><td>Scene scans supply geometry and appearance. Navigation episodes define the goal and starting state. <a href="https://aihabitat.org/datasets/hm3d/">Dataset and access terms</a></td></tr>
+                            <tr id="replicacad"><th scope="row">ReplicaCAD<br>Interactive indoor rearrangement</th><td>Reconstructed apartment layouts with editable CAD assets.</td><td>Object rearrangement and embodied interaction in Habitat.</td><td>Choose assets that support the intended interaction. Visual realism alone does not specify contact behavior. <a href="https://aihabitat.org/datasets/replica_cad/">Scene assets</a></td></tr>
+                            <tr id="homerobot"><th scope="row">HomeRobot OVMM<br>Find and move a requested object</th><td>A mobile-manipulation stack and benchmark connecting simulated tasks with Stretch robot operation.</td><td>Explore, identify an open-vocabulary target, pick it up, and place it on a receptacle.</td><td>Report navigation, picking, and placing failures as well as end-to-end success. <a href="https://github.com/facebookresearch/home-robot">Code, challenge links, and hardware guidance</a></td></tr>
+                            <tr id="habitat3"><th scope="row">Habitat 3.0<br>Human–robot collaboration</th><td>Human avatars and interaction scenarios in a simulation platform.</td><td>Social navigation and collaborative rearrangement.</td><td>Specify simulated behavior and human-in-the-loop conditions. <a href="https://aihabitat.org/habitat3/">Project and demonstrations</a></td></tr>
+                            <tr id="socnav"><th scope="row">SocNavBench<br>Evaluate navigation around people</th><td>A simulator and scenarios grounded in recorded pedestrian trajectories.</td><td>Compare planners under shared crowd motion.</td><td>State whether people replay recorded paths or react to the robot. <a href="https://github.com/CMU-TBD/SocNavBench">Code and scenario setup</a></td></tr>
+                            <tr id="seanav"><th scope="row">SEANavBench / SEAN 2.0<br>Social navigation under varied conditions</th><td>Simulation and benchmarking tools for navigation among pedestrians.</td><td>Study safety and efficiency across crowd conditions.</td><td>Report pedestrian behavior and the chosen metrics; human comfort needs an explicit study design. <a href="https://seanavbench.interactive-machines.com/">Benchmark</a> · <a href="https://sean.interactive-machines.com/">SEAN 2.0 platform</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>A room dataset answers where the agent can move. A task episode adds what it must achieve. An interaction protocol specifies how other agents behave. Saving all three makes it possible to distinguish an unfamiliar layout from a failure to coordinate with people.</p>
+            </section>
+
+            <section id="tools" aria-labelledby="tools-title">
+                <h2 id="tools-title">Safety, data tooling, and the rest of the evaluation stack</h2>
+                <div class="note-table" role="region" aria-labelledby="tools-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption class="caption-top" id="tools-caption">Resources that complement the datasets above.</caption>
+                        <thead><tr><th scope="col">Resource</th><th scope="col">Purpose and resource type</th><th scope="col">What to record</th></tr></thead>
+                        <tbody>
+                            <tr><th scope="row">SafeVLA-Bench</th><td>A safety-evaluation layer on LIBERO and RoboCasa-365 rollouts, reporting native success, safety, unsafe successes, and violation severity.</td><td>The host task, safety specification, and thresholds alongside completion. <a href="https://safevla.org/">Official project and release links</a></td></tr>
+                            <tr><th scope="row">robosuite</th><td>A MuJoCo-based simulation framework for constructing and executing manipulation tasks and collecting experience.</td><td>The robot, controller, task configuration, and collected demonstration subset. <a href="https://robosuite.ai/">Project and documentation</a></td></tr>
+                            <tr><th scope="row">LeRobot</th><td>Policy-learning tools and a shared ecosystem for episode datasets, models, and robot integrations.</td><td>The actual dataset identifier, format version, features, and train/evaluation split. <a href="https://huggingface.co/docs/lerobot/">Documentation and dataset guides</a></td></tr>
+                            <tr><th scope="row">RobotPerf</th><td>A robotics-computing benchmark suite for measuring execution performance.</td><td>End-to-end latency, throughput, hardware, and measurement boundaries. <a href="https://robotperf.github.io/">Benchmark suite</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>The supplied survey also covers ISO, ASTM, NIST test methods, and RoboCup competitions. Those address hardware performance, safety requirements, or complete-system evaluation. This article focuses on resources for training and testing data-driven capabilities; a deployment study can add the relevant physical tests to that evaluation plan.</p>
+            </section>
+
+            <section id="selection" aria-labelledby="selection-title">
+                <h2 id="selection-title">Turn a dataset choice into an experiment</h2>
+                <h3>Example: a household fetch-and-place robot</h3>
+                <p>Use indoor scene assets and navigation episodes to test finding a named object. Pretrain or adapt manipulation from demonstrations compatible with the robot's action space. Use a controlled manipulation suite to vary object and goal conditions. Finally, run complete fetch-and-place trials on hardware, keeping failed picks, recovery attempts, elapsed time, and operator interventions in the log. This proposal combines the resource types above into a measurable research plan.</p>
+                <ul>
+                    <li><strong>Specify the unit.</strong> Count episodes, timesteps, hours, scenes, and tasks separately. Frame count can be dominated by repeated views of the same behavior.</li>
+                    <li><strong>Match the action interface.</strong> Record joint or end-effector commands, reference frames, control frequency, gripper conventions, and action scaling.</li>
+                    <li><strong>Hold out the intended source of change.</strong> A new scene, object instance, task, or robot body tests a different generalization question. Split related trajectories together.</li>
+                    <li><strong>Check available supervision.</strong> Inspect language quality, synchronization, calibration, depth coverage, failure episodes, and which sensors exist in each sample.</li>
+                    <li><strong>Record provenance and access.</strong> Save the dataset release, constituent mixture, download source, terms, preprocessing, and simulator version.</li>
+                    <li><strong>Test closed-loop behavior.</strong> Pair task success with partial progress, time, interventions, and safety measures appropriate to the deployment.</li>
+                </ul>
+                <p>Dataset scale helps only when the examples, action semantics, and evaluation conditions match the research question. The practical output of this selection process is a documented training mixture and a set of held-out tests that expose the capability you want to improve.</p>
+            </section>
+            <footer><a href="../../posts.html">← Back to Posts</a></footer>
+        </article>
+    </main>
+</body>
+</html>
