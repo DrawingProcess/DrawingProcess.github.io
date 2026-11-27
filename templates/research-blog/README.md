@@ -8,7 +8,7 @@ For supplied video summaries, attribute names and numbers to that source until v
 Cover tasks, role in robot learning, significance, experimental conditions, and limits.
 Distinguish reported results from analysis. Replace all reference statistics for new topics.
 Add optional local figures with dimensions, alt text, captions, and source attribution.
-Add a full-card link to posts.html. Keep NVIDIA Atlas as the first card.
+Add a full-card link to posts.html. Order all cards by their time datetime value, newest first.
 Reuse root style.css and Bootstrap. Check mobile table scrolling, focus, paths, and anchors.
 Commit locally. Push or create a PR only when requested.
 
