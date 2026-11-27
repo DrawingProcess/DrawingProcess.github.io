@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A video-based research commentary on agentic robotics, orchestration, latency, contact-rich control, and deployment evidence.">
+    <title>Agentic Robotics at CoRL 2026 | DrawingProcess</title>
+    <link rel="icon" href="../../data/resume/DrawingProcess.png">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <link href="../../bootstrap.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary">
+            <a class="site-brand" href="../../index.html#home">Seongjun Choi</a>
+            <ul class="site-nav-links">
+                <li><a href="../../index.html#home">Home</a></li>
+                <li><a href="../../index.html#publications">Publications</a></li>
+                <li><a href="../../posts.html" aria-current="true">Posts</a></li>
+                <li><a href="../../archive.html">Archive</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container research-note">
+        <article>
+            <header>
+                <p class="text-muted mb-1"><time datetime="2026-11-27">November 27, 2026</time></p>
+                <h1>Agentic Robotics at CoRL 2026</h1>
+                <p class="lead">Frontier models can write control code, inspect observations, and coordinate robot tools. The research question is how to turn that capability into timely, reliable physical work.</p>
+                <p>This commentary is based on a supplied timestamped summary of the linked CoRL video. Video-specific names, dates, and numbers below are attributed to that summary. The original transcript and benchmark reports were unavailable for independent checking when this note was prepared. “Astra,” “Robot Lab 120,” “RoboDojo,” and “Gemma Robotics” retain the summary's terminology. <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8">Source video</a></p>
+            </header>
+            <nav class="note-contents" aria-label="Article contents">
+                <ul role="list">
+                    <li><a href="#comparison">Research map</a></li>
+                    <li><a href="#reaction">Community response</a></li>
+                    <li><a href="#architecture">Agent architecture</a></li>
+                    <li><a href="#evidence">Reported evidence</a></li>
+                    <li><a href="#limits">Deployment constraints</a></li>
+                    <li><a href="#research">Research directions</a></li>
+                </ul>
+            </nav>
+            <section id="comparison" aria-labelledby="comparison-title">
+                <h2 id="comparison-title">Where agentic robotics fits in robot learning</h2>
+                <div class="note-table" role="region" aria-labelledby="comparison-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption id="comparison-caption" class="caption-top">An analytical map of the themes in the supplied summary.</caption>
+                        <thead><tr><th scope="col">Research area</th><th scope="col">Task or mechanism</th><th scope="col">Role in robot learning</th><th scope="col">Why it matters</th><th scope="col">What to measure</th></tr></thead>
+                        <tbody>
+                            <tr><th scope="row">Code-generating policies</th><td>Inspect images, write action code, execute, and inspect the next observation.</td><td>Adapt behavior at runtime using general reasoning and programming.</td><td>Available tools let an agent express new task behavior with less task-specific training.</td><td>Success, invalid commands, code failures, and observation-to-action latency.</td></tr>
+                            <tr><th scope="row">Skill orchestration</th><td>Select a planner or learned skill, check completion, and recover.</td><td>Connect long-horizon reasoning to robot-specific execution.</td><td>A slower reasoning loop can choose goals while local feedback handles fast physical changes.</td><td>Subgoal accuracy, recovery success, interventions, and jobs per hour.</td></tr>
+                            <tr><th scope="row">Agent-assisted development</th><td>Generate scenes and tests, diagnose failures, and iterate with experts.</td><td>Accelerate environment creation, evaluation, and data collection.</td><td>Researchers can explore more hypotheses and task variants within an engineering budget.</td><td>Human review time, valid scene yield, coverage, and real-world transfer.</td></tr>
+                            <tr><th scope="row">Deployment learning</th><td>Record contact failures, retries, drift, and operator corrections.</td><td>Improve policies from states reached during real use.</td><td>Hardware exposes interactions and failures missing from successful demonstrations.</td><td>Failure recurrence, force limits, recovery time, and sustained throughput.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>The first two rows concern online behavior. The third concerns development, and the fourth supplies feedback for later training. Faster development and more reliable control require different evidence.</p>
+            </section>
+            <section id="reaction" aria-labelledby="reaction-title">
+                <h2 id="reaction-title">A community reconsidering its assumptions</h2>
+                <p>The summary frames reactions to Astra's reported September 3 release through a humorous sequence of denial, anger, bargaining, depression, and acceptance. It describes skepticism about selected demonstrations, arguments about the continued need for motion planners, and concern that programming ability might absorb work previously treated as a research specialty.</p>
+                <p>This narrative describes reactions reported in the video. It does not establish a measured consensus among robotics researchers. The technical question behind it is which capabilities a stronger general model supplies and which still depend on robot-specific data, controllers, and testing. <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=26">Community reactions, 0:26–1:09</a></p>
+            </section>
+            <section id="architecture" aria-labelledby="architecture-title">
+                <h2 id="architecture-title">Three places to put the agent</h2>
+                <h3>Generate the next action program</h3>
+                <p>The described loop reads observations, writes commands, runs them, and inspects fresh images, including wrist views. Its program becomes a temporary controller. The API determines the difficulty: calling a validated move-to-pose primitive differs from issuing raw joint commands. Tool access, privileged state, and human assistance belong in the experimental description. <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=171">Observation and code loop, 2:51</a></p>
+                <h3>Coordinate specialized skills</h3>
+                <p>An orchestrator can choose goals, invoke a planner or learned policy, check progress, and select a recovery. As an architectural inference, this allows slow reasoning above a faster local feedback loop. The interface needs explicit preconditions, valid actions, termination criteria, and failure reports. Mistaking partial progress for success sends subsequent steps toward the wrong state.</p>
+                <h3>Help build and test the system</h3>
+                <p>The summary describes agents constructing simulations and working with experts in real-to-sim-to-real iterations. Here, the model assists development before or between deployments. Generated scenes and tests need checks for geometry, contact behavior, and whether their success criteria reflect the intended work. <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=205">Simulation and development, 3:25</a> · <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=249">Human review, 4:09</a></p>
+            </section>
+            <section id="evidence" aria-labelledby="evidence-title">
+                <h2 id="evidence-title">Reported results and their interpretation</h2>
+                <div class="note-table" role="region" aria-labelledby="evidence-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption id="evidence-caption" class="caption-top">Claims from the supplied video summary, pending checks against the original experiments.</caption>
+                        <thead><tr><th scope="col">Reported experiment</th><th scope="col">Reported value</th><th scope="col">What remains to check</th></tr></thead>
+                        <tbody>
+                            <tr><th scope="row"><a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=82">RoboCasa / “Robot Lab 120”</a></th><td>Astra 66% versus a comparison model at 28%.</td><td>Exact benchmark name, baseline, task set, trial count, observations, and time budget.</td></tr>
+                            <tr><th scope="row"><a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=99">“RoboDojo”</a></th><td>Astra 22 versus “PI05” at 7.</td><td>Score units, aggregation, tools, and protocol. The summary does not identify these as percentages.</td></tr>
+                            <tr><th scope="row"><a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=224">Development cadence</a></th><td>“Gemma Robotics 2” after 300 days, then “2.5” after 103 days.</td><td>Product names, date endpoints, engineering scope, and evidence attributing the interval to agent assistance.</td></tr>
+                            <tr><th scope="row"><a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=326">Direct-policy latency</a></th><td>An 18-second model call and 97% of runtime waiting in one execution.</td><td>Model version, serving hardware, network delay, scheduling, and timing breakdown.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>These reports motivate research into capability and system design. A reproducible comparison must align tasks, observations, action interfaces, interventions, and wall-clock budgets. The figures cannot establish a shared ranking across the named benchmarks.</p>
+            </section>
+            <section id="limits" aria-labelledby="limits-title">
+                <h2 id="limits-title">The gap between solving a task and doing useful work</h2>
+                <h3>Latency changes the state being controlled</h3>
+                <p>A scene may change while the model reasons. Long calls are particularly consequential for moving objects, maintained contact, and work near people. Measure sensing, reasoning, action execution, and retries together. Throughput—accepted completed jobs divided by elapsed operating time—captures waiting and recovery. Report it alongside success rates and latency distributions. <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=326">Latency, 5:26</a> · <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=576">Throughput, 9:36</a></p>
+                <h3>Physical mistakes alter what happens next</h3>
+                <p>A dropped or damaged part can change subsequent work. The summary contrasts this with code changes that can often be reverted. Define an action envelope, force and collision limits, intervention rules, and stop conditions. Completion judgments also need scrutiny: a visually plausible placement can leave a connector unseated. <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=358">Physical consequences, 5:58</a> · <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=376">Completion judgments, 6:16</a></p>
+                <h3>Contact exposes missing information</h3>
+                <p>The summary identifies contact-rich dynamics as a data gap. Language and visual knowledge may suggest a strategy, while execution depends on friction, compliance, forces, and occluded geometry. Experiments should isolate task reasoning, state estimation, contact control, and completion detection to identify where the failure originates. <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=581">Contact-rich interactions, 9:41</a></p>
+                <h3>Specialization is a system design choice</h3>
+                <p>The summarized speakers argue for specialized models where latency, power, cost, and reliability constrain deployment. Compare a general orchestrator with a fixed planner using the same local skills, then separately test direct code generation. Holding execution constant helps identify what reasoning adds. <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=481">System-level questions, 8:01</a> · <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=511">Specialized models, 8:31–9:16</a></p>
+            </section>
+            <section id="research" aria-labelledby="research-title">
+                <h2 id="research-title">Research directions</h2>
+                <p>The following proposals are analysis developed from the summary.</p>
+                <ul>
+                    <li><strong>Reasoning under a deadline.</strong> Vary the allowed inference time and measure whether better decisions offset waiting. Include moving and disturbed scenes.</li>
+                    <li><strong>Verifiable skill interfaces.</strong> Expose preconditions, progress, failure codes, and recovery options. Measure false completion and repeated failure.</li>
+                    <li><strong>Learning from deployment.</strong> Preserve contact failures, retries, and operator corrections. Test whether training on these cases reduces recurrence on held-out runs.</li>
+                    <li><strong>Persistent evaluation.</strong> Carry state across jobs and compare throughput, quality, interventions, and safety stops against independently reset episodes.</li>
+                    <li><strong>Auditing generated environments.</strong> Compare generated scenes and evaluators with independent checks and hardware measurements. Track review effort alongside generation speed.</li>
+                </ul>
+                <p>These questions connect to the earlier comparison: GR00T 2 concerns policy transfer, DexBench controlled task evaluation, HolidayFactory persistent simulated jobs, and Gemini Robotics 2.5 integrated deployment. <a href="../robot-learning-2026-11/index.html">Robot Learning, November 2026</a></p>
+                <p>The closing perspective in the summary is that frontier models lower barriers and expand what robotics teams can attempt. Useful deployment then depends on tools, physical execution, measurement, and feedback from hardware. <a href="https://www.youtube.com/watch?v=PrYdKRkxBs8&amp;t=670">Closing perspective, 11:10</a></p>
+            </section>
+            <footer><a href="../../posts.html">← Back to Posts</a></footer>
+        </article>
+    </main>
+</body>
+</html>

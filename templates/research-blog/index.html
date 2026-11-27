@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="[One-sentence summary]">
+    <title>[Article title] | DrawingProcess</title>
+    <link rel="icon" href="../../data/resume/DrawingProcess.png">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <link href="../../bootstrap.min.css" rel="stylesheet">
+    <link href="../../style.css" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Primary">
+            <a class="site-brand" href="../../index.html#home">Seongjun Choi</a>
+            <ul class="site-nav-links">
+                <li><a href="../../index.html#home">Home</a></li>
+                <li><a href="../../index.html#publications">Publications</a></li>
+                <li><a href="../../posts.html" aria-current="true">Posts</a></li>
+                <li><a href="../../archive.html">Archive</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Copy to posts/your-slug/index.html. Replace bracketed text and date.
+         Keep unique IDs synchronized with their links when adding sections. -->
+    <main class="container research-note">
+        <article>
+            <header>
+                <p class="text-muted mb-1"><time datetime="2026-11-27">[Publication date]</time></p>
+                <h1>[Article title]</h1>
+                <p class="lead">[Research question and why it matters]</p>
+                <p>[Source material, review date, and verification limits]</p>
+            </header>
+            <nav class="note-contents" aria-label="Article contents">
+                <ul role="list">
+                    <li><a href="#comparison">Comparison</a></li>
+                    <li><a href="#project-a">Project A</a></li>
+                    <li><a href="#project-b">Project B</a></li>
+                    <li><a href="#experiment">Research implications</a></li>
+                </ul>
+            </nav>
+            <section id="comparison" aria-labelledby="comparison-title">
+                <h2 id="comparison-title">[Comparison question]</h2>
+                <div class="note-table" role="region" aria-labelledby="comparison-caption" tabindex="0">
+                    <table class="table table-sm">
+                        <caption id="comparison-caption" class="caption-top">[Comparison scope and conditions]</caption>
+                        <thead><tr><th scope="col">Project</th><th scope="col">Tasks covered</th><th scope="col">Role in robot learning</th><th scope="col">Why it matters</th><th scope="col">Evidence and limits</th></tr></thead>
+                        <tbody>
+                            <tr><th scope="row"><a href="#project-a">[Project A]</a></th><td>[Tasks]</td><td>[Learning or evaluation component]</td><td>[Bottleneck addressed]</td><td>[Result, setup, and uncertainty]</td></tr>
+                            <tr><th scope="row"><a href="#project-b">[Project B]</a></th><td>[Tasks]</td><td>[Learning or evaluation component]</td><td>[Bottleneck addressed]</td><td>[Result, setup, and uncertainty]</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section id="project-a" aria-labelledby="project-a-title">
+                <h2 id="project-a-title">[Project A]</h2>
+                <p class="text-muted">[Project type and release date]</p>
+                <h3>Problem and method</h3>
+                <p>[Inputs, outputs, objective, data, and execution loop]</p>
+                <!-- Optional local figure with real dimensions, alt text, and attributed source. -->
+                <h3>Evidence</h3>
+                <p>[Task, robot, trials, metric, baseline, and result. Link primary sources at paragraph ends.]</p>
+                <h3>Research significance and limits</h3>
+                <p>[What the experiment supports and what remains untested]</p>
+            </section>
+            <section id="project-b" aria-labelledby="project-b-title">
+                <h2 id="project-b-title">[Project B]</h2>
+                <p class="text-muted">[Project type and release date]</p>
+                <h3>Problem and method</h3>
+                <p>[Method and place in the learning pipeline]</p>
+                <h3>Evidence</h3>
+                <p>[Experimental conditions and source]</p>
+                <h3>Research significance and limits</h3>
+                <p>[Research implications and open questions]</p>
+            </section>
+            <section id="experiment" aria-labelledby="experiment-title">
+                <h2 id="experiment-title">Research implications</h2>
+                <p>[Propose a controlled experiment, its variables, measurements, and interpretations.]</p>
+            </section>
+            <footer><a href="../../posts.html">← Back to Posts</a></footer>
+        </article>
+    </main>
+</body>
+</html>
